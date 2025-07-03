@@ -7,4 +7,6 @@ public abstract class Usuario
     protected String emailInstitucinal;
     protected String telefone;
     protected String senha;
+
+
 }
