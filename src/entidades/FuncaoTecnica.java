@@ -1,0 +1,4 @@
+package entidades;
+public enum FuncaoTecnica {
+    ADMINISTRADOR, ASSISTENTE, TECNICO_CONTABILIDADE, TECNICO_TI, VIGILANTE
+}
