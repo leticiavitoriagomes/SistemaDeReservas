@@ -17,4 +17,13 @@ public class Aluno extends Usuario {
     public String getSemestre() {
         return semestre;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                "\nCurso: " + curso +
+                "\nMatrícula: " + matricula +
+                "\nSemestre: " + semestre;
+    }
+
 }

@@ -13,4 +13,12 @@ public class TecnicoAdministrativo extends Servidor {
     public String getDepartamento() {
         return departamento;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                "\nFunção Técnica: " + funcao +
+                "\nDepartamento: " + departamento;
+    }
+
 }

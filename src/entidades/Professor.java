@@ -13,4 +13,12 @@ public class Professor extends Servidor {
     public CargoAcademico getCargoAcademico() {
         return cargoAcademico;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                "\nCurso Ministrado: " + cursoMinistrado +
+                "\nCargo Acadêmico: " + cargoAcademico;
+    }
+
 }
