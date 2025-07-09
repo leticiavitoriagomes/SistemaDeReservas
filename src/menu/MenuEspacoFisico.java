@@ -36,24 +36,67 @@ public class MenuEspacoFisico {
         };
 
         while (true) {
-            String equip = JOptionPane.showInputDialog("Adicionar equipamento:").trim();
-            if (equip.isEmpty()) break;
-            espaco.adicionarEquipamento(new Equipamento(equip));
+            String equip = JOptionPane.showInputDialog("Adicionar equipamento (ou deixe em branco para parar):");
+            if (equip == null || equip.trim().isEmpty()) break;
+            espaco.adicionarEquipamento(new Equipamento(equip.trim()));
         }
 
         gerEspacos.adicionar(espaco);
+        JOptionPane.showMessageDialog(null, "Espaço cadastrado com sucesso!");
     }
 
     public void listarEspacos() {
         StringBuilder sb = new StringBuilder();
         for (EspacoFisico e : gerEspacos.listar()) {
             sb.append(e.getTipo()).append(" em ").append(e.getLocalizacao())
-                    .append("\nCapacidade: ").append(e.getCapacidade()).append("\n---------------------------\n");
+                    .append("\nCapacidade: ").append(e.getCapacidade());
+
+            // Lista os equipamentos do espaço
+            if (e.getEquipamentos().isEmpty()) {
+                sb.append("\nEquipamentos: Nenhum");
+            } else {
+                sb.append("\nEquipamentos:");
+                for (Equipamento eq : e.getEquipamentos()) {
+                    sb.append("\n - ").append(eq.getNome());
+                }
+            }
+
+            sb.append("\n---------------------------\n");
         }
+
         JOptionPane.showMessageDialog(null, sb.isEmpty() ? "Sem espaços!" : sb.toString());
     }
 
-    public void excluirEspaco() throws CampoObrigatorioException {
-        gerEspacos.remover(getCampo("Localização do espaço a excluir"));
+
+    public void excluirEspaco() {
+        if (gerEspacos.listar().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Não há espaços cadastrados.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < gerEspacos.listar().size(); i++) {
+            EspacoFisico e = gerEspacos.listar().get(i);
+            sb.append(i).append(" - ")
+                    .append(e.getTipo()).append(" em ")
+                    .append(e.getLocalizacao()).append("\n");
+        }
+
+        try {
+            String entrada = JOptionPane.showInputDialog("Escolha o número do espaço que deseja excluir:\n" + sb.toString());
+            if (entrada == null || entrada.trim().isEmpty()) return;
+
+            int indice = Integer.parseInt(entrada.trim());
+            if (indice >= 0 && indice < gerEspacos.listar().size()) {
+                EspacoFisico espaco = gerEspacos.listar().get(indice);
+                gerEspacos.remover(espaco.getLocalizacao());
+                JOptionPane.showMessageDialog(null, "Espaço excluído com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Índice inválido!");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Entrada inválida! Digite um número.");
+        }
     }
+
 }

@@ -78,16 +78,23 @@ public class MenuReserva {
     }
 
     public void excluirReserva() throws CampoObrigatorioException {
-        String matricula = getCampo("Matrícula da reserva");
+        String matricula = getCampo("Matrícula do usuário da reserva");
+        String senha = getCampo("Senha do usuário");
+
         Reserva r = gerReservas.getTodasReservas().stream().filter(res -> {
-            String m = (res.getUsuario() instanceof Aluno) ? ((Aluno) res.getUsuario()).getMatricula() :
-                    ((Servidor) res.getUsuario()).getMatriculaInstitucional();
-            return m.equalsIgnoreCase(matricula.trim());
+            Usuario usuario = res.getUsuario();
+            String m = (usuario instanceof Aluno) ? ((Aluno) usuario).getMatricula() :
+                    (usuario instanceof Servidor) ? ((Servidor) usuario).getMatriculaInstitucional() : null;
+
+            return m != null && m.equalsIgnoreCase(matricula.trim()) && usuario.getSenha().equals(senha.trim());
         }).findFirst().orElse(null);
+
         if (r != null) {
             gerReservas.removerReserva(r);
+            JOptionPane.showMessageDialog(null, "Reserva excluída com sucesso!");
         } else {
-            JOptionPane.showMessageDialog(null, "Reserva não encontrada!");
+            JOptionPane.showMessageDialog(null, "Reserva não encontrada ou senha incorreta!");
         }
     }
 }
+

@@ -70,6 +70,24 @@ public class MenuUsuarios {
     }
 
     public void excluirUsuario() throws CampoObrigatorioException {
-        gerUsuarios.remover(getCampo("Matrícula do usuário a excluir"));
+        String matricula = getCampo("Matrícula do usuário a excluir");
+        String senha = getCampo("Senha do usuário");
+
+        Usuario usuario = gerUsuarios.listar().stream()
+                .filter(u -> {
+                    String m = (u instanceof Aluno) ? ((Aluno) u).getMatricula() :
+                            (u instanceof Servidor) ? ((Servidor) u).getMatriculaInstitucional() : null;
+                    return m != null && m.equalsIgnoreCase(matricula.trim()) && u.getSenha().equals(senha.trim());
+                })
+                .findFirst()
+                .orElse(null);
+
+        if (usuario != null) {
+            gerUsuarios.remover(matricula);
+            JOptionPane.showMessageDialog(null, "Usuário excluído com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(null, "Usuário não encontrado ou senha incorreta!");
+        }
     }
+
 }
