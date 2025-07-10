@@ -11,48 +11,80 @@ public class Menu {
     private static final ServicoEspacoFisico gerEspacos = new ServicoEspacoFisico();
     private static final ServicoReserva gerReservas = new ServicoReserva();
 
-
     private static final MenuUsuarios menuUsuario = new MenuUsuarios(gerUsuarios);
     private static final MenuEspacoFisico menuEspaco = new MenuEspacoFisico(gerEspacos);
     private static final MenuReserva menuReserva = new MenuReserva(gerUsuarios, gerEspacos, gerReservas);
 
     public static void exibirMenu() {
-        while (true) {
-            String[] opcoes = {
-                    "Cadastrar Usuário", "Cadastrar Espaço", "Agendar Reserva",
-                    "Usuários Cadastrados", "Espaços Cadastrados", "Reservas Cadastradas",
-                    "Excluir Usuário", "Excluir Espaço", "Excluir Reserva", "Sair"
-            };
+        JFrame frame = new JFrame("Menu Principal");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 600);
 
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            for (String opcao : opcoes) {
-                JButton button = new JButton(opcao);
-                button.setAlignmentX(Component.CENTER_ALIGNMENT);
-                button.addActionListener(e -> {
-                    try {
-                        switch (opcao) {
-                            case "Cadastrar Usuário" -> menuUsuario.cadastrarUsuario();
-                            case "Cadastrar Espaço" -> menuEspaco.cadastrarEspaco();
-                            case "Agendar Reserva" -> menuReserva.agendarReserva();
-                            case "Usuários Cadastrados" -> menuUsuario.listarUsuarios();
-                            case "Espaços Cadastrados" -> menuEspaco.listarEspacos();
-                            case "Reservas Cadastradas" -> menuReserva.listarReservas();
-                            case "Excluir Usuário" -> menuUsuario.excluirUsuario();
-                            case "Excluir Espaço" -> menuEspaco.excluirEspaco();
-                            case "Excluir Reserva" -> menuReserva.excluirReserva();
-                            case "Sair" -> System.exit(0);
-                        }
-                    } catch (CampoObrigatorioException ex) {
-                        JOptionPane.showMessageDialog(null, "Erro: " + ex.getMessage());
-                    }
-                });
-                panel.add(button);
-                panel.add(Box.createRigidArea(new Dimension(0, 5))); // Espaço entre botões
+
+        JLabel cadastrarLabel = new JLabel("Cadastrar");
+        cadastrarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(cadastrarLabel);
+
+        addButton(panel, "Cadastrar Usuário", () -> menuUsuario.cadastrarUsuario());
+        addButton(panel, "Cadastrar Espaço", () -> menuEspaco.cadastrarEspaco());
+        addButton(panel, "Agendar Reserva", () -> menuReserva.agendarReserva());
+
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(new JSeparator());
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        JLabel listarLabel = new JLabel("Listar");
+        listarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(listarLabel);
+
+        addButton(panel, "Usuários Cadastrados", () -> menuUsuario.listarUsuarios());
+        addButton(panel, "Espaços Cadastrados", () -> menuEspaco.listarEspacos());
+        addButton(panel, "Reservas Cadastradas", () -> menuReserva.listarReservas());
+
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(new JSeparator());
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        JLabel excluirLabel = new JLabel("Excluir");
+        excluirLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(excluirLabel);
+
+        addButton(panel, "Excluir Usuário", () -> menuUsuario.excluirUsuario());
+        addButton(panel, "Excluir Espaço", () -> menuEspaco.excluirEspaco());
+        addButton(panel, "Excluir Reserva", () -> menuReserva.excluirReserva());
+
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        panel.add(new JSeparator());
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        addButton(panel, "Sair", () -> System.exit(0));
+
+        frame.add(panel);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    @FunctionalInterface
+    private interface AcaoComExcecao {
+        void executar() throws CampoObrigatorioException;
+    }
+
+    private static void addButton(JPanel panel, String texto, AcaoComExcecao action) {
+        JButton button = new JButton(texto);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
+        button.addActionListener(e -> {
+            try {
+                action.executar();
+            } catch (CampoObrigatorioException ex) {
+                JOptionPane.showMessageDialog(null, "Erro: " + ex.getMessage());
             }
-
-            JOptionPane.showMessageDialog(null, panel, "Menu Principal", JOptionPane.PLAIN_MESSAGE);
-        }
+        });
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
     }
 }
